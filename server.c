@@ -108,9 +108,12 @@ int main(int argc, char *argv[])
     for (int i=0;i<count;i++){
         temp_average = temp_average + temp[i];
         hum_average = hum_average + hum[i];
-        temp_average = temp_average / count;
-        hum_average = hum_average / count;
+
+        printf("T: %f, H: %f\n",temp_average,hum_average);
     }
+
+    temp_average = temp_average / count;
+    hum_average = hum_average / count;
 
     char message[64];
     snprintf(message, sizeof(message), "temp: %f; hum: %f\n", temp_average, hum_average);
