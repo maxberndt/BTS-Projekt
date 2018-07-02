@@ -153,6 +153,7 @@ static void *quit(void* val) {
 int main(int argc, char *argv[])
 {
 
+    char config_file[] = "dht11srv.conf";
 
     while ((++argv)[0])
     {
@@ -169,6 +170,10 @@ int main(int argc, char *argv[])
                 case 'v':
                     verbose = 1;
                     break;
+                case 'c':
+                    printf("%s\n\n", argv[0+1]);
+                    strcpy(config_file, argv[0+1]);
+                    break;
             }
         }
 
@@ -176,17 +181,17 @@ int main(int argc, char *argv[])
 
     if(verbose){
         printf("Verbose mode is active!\n\n");
-        printf("Scanning dht11srv.conf File...\n");
+        printf("Scanning %s File...\n",config_file);
     }
 
     FILE *config;
 
-    config = fopen("dht11srv.conf", "r");
+    config = fopen(config_file, "r");
 
     if(NULL == config) {
         printf("Config File Error!\n"
                "Using Default Values. \n"
-               "Port: 2000, delay: 1000 ms, 5 values per average");
+               "Port: 2000, delay: 1000 ms, 5 values per average\n");
     }
 
     else{
@@ -215,6 +220,10 @@ int main(int argc, char *argv[])
     printf("========== SERVER UP ==========\n"
            "Terminate Server with q + Enter\n"
            "===============================\n\n");
+
+    if (!verbose){
+        printf("Start in verbose mode (-v) to show measurement values\n");
+    }
 
     if ( wiringPiSetup() == -1 ){
         error("WiringPI  Error\n");
