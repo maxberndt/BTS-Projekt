@@ -18,10 +18,9 @@ int* read_dht11_dat();
 void error();
 
 int count = 5;
-int portnr = 20121;
-
-//Value Vars
-//Anzahl der Werte pro Mittelwert
+int portnr = 2000; //Default Port 2000
+int delay_t = 1000;
+int verbose = 0;
 
 float temp_average = 0, hum_average = 0, temp_current = 0, hum_current = 0;
 int * values;
@@ -40,20 +39,20 @@ static void *measure_thread(void* val) {
         for (int i=0;i<count;){
             values = read_dht11_dat();
             if (values[0]!=0){ //Luftfeuchtigkeit von 0 kommt real kaum vor
-                printf( "Humidity = %d.%d %% Temperature = %d.%d *C\n", values[0], values[1], values[2], values[3] );
+                if (verbose){
+                    printf( "Humidity = %d.%d %% Temperature = %d.%d *C\n", values[0], values[1], values[2], values[3] );
+                }
                 temp[i] = values[2];
                 hum[i] = values[0];
                 i++;
             }
-            delay( 5000 ); /* wait 1sec to refresh */
+            delay( delay_t );
         }
 
         //Calculate Average
         for (int i=0;i<count;i++){
             temp_average = temp_average + temp[i];
             hum_average = hum_average + hum[i];
-
-            //printf("T: %f, H: %f\n",temp_average,hum_average);
         }
 
         temp_current = temp_average / count;
@@ -64,8 +63,10 @@ static void *measure_thread(void* val) {
         temp_average = 0;
         hum_average = 0;
 
-        printf("T: %f, H: %f\n",temp_current,hum_current);
-        snprintf(message, sizeof(message), "temp: %f; hum: %f\n", temp_current, hum_current);
+        if (verbose){
+            printf("Average T: %f, Average H: %f\n",temp_current,hum_current);
+        }
+        snprintf(message, sizeof(message), "Temperatur: %f; Humidity: %f\n", temp_current, hum_current);
 
     }
 
@@ -73,6 +74,8 @@ static void *measure_thread(void* val) {
 }
 
 static void *socketconnect(void* val){
+
+
 
     socklen_t clilen;
     char buffer[256];
@@ -137,11 +140,12 @@ static void *quit(void* val) {
 
     while (1){
         if (getchar() == 'q')
-            printf("Server is terminating...");
+            printf("Server is terminating...But he will be back...\n");
             close(newsockfd);
             close(sockfd);
             exit(1);
     }
+
     return NULL;
 
 }
@@ -149,35 +153,89 @@ static void *quit(void* val) {
 int main(int argc, char *argv[])
 {
 
+
+    while ((++argv)[0])
+    {
+        if (argv[0][0] == '-' )
+        {
+            switch (argv[0][1])  {
+
+                default:
+                    printf("Unknown parameter -%c\n\n", argv[0][1]);
+                    break;
+                case 'h':
+                    printf("Help: BLABLABLA\n\n");
+                    break;
+                case 'v':
+                    verbose = 1;
+                    break;
+            }
+        }
+
+    }
+
+    if(verbose){
+        printf("Verbose mode is active!\n\n");
+        printf("Scanning dht11srv.conf File...\n");
+    }
+
+    FILE *config;
+
+    config = fopen("dht11srv.conf", "r");
+
+    if(NULL == config) {
+        printf("Config File Error!\n"
+               "Using Default Values. \n"
+               "Port: 2000, delay: 1000 ms, 5 values per average");
+    }
+
+    else{
+
+        fscanf(config,"%i,%i,%i\n",&count,&portnr,&delay_t);
+
+        if (delay_t<1000){
+            printf("Delay Time too short, must be over 1000ms. Setting it to 1000ms...\n");
+            delay_t = 1000;
+        }
+
+        if (count == 5 && portnr == 2000 && delay_t == 1000){
+            printf("Nah! Nah! Nah! Seems like the config file was not in the right format.\n"
+                   "Using default Values...\n\n");
+        }
+
+        if (verbose){
+            printf("Count: %i - Port: %i - Delay: %i ms\n\n",count,portnr,delay_t);
+        }
+
+    }
+
     pthread_t thread1,thread2,thread3;
     int rc;
-
-    count = 6;
 
     printf("========== SERVER UP ==========\n"
            "Terminate Server with q + Enter\n"
            "===============================\n\n");
 
     if ( wiringPiSetup() == -1 ){
-        error("Fehler beim WiringPI Setup\n");
+        error("WiringPI  Error\n");
     }
 
     rc = pthread_create( &thread1, NULL, &measure_thread, NULL );
 
     if( rc != 0 ) {
-        error("Konnte Thread 1 nicht erzeugen\n");
+        error("Error while creating Thread 1\n");
     }
 
     rc = pthread_create( &thread2, NULL, &socketconnect, NULL );
 
     if( rc != 0 ) {
-        error("Konnte Thread 2 nicht erzeugen\n");
+        error("Error while creating Thread 2\n");
     }
 
     rc = pthread_create( &thread3, NULL, &quit, NULL );
 
     if( rc != 0 ) {
-        error("Konnte Thread 3 nicht erzeugen\n");
+        error("Error while creating Thread 3\n");
     }
 
     pthread_join( thread1, NULL );
@@ -186,10 +244,6 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
-
-
-
 
 
 
