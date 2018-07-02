@@ -19,8 +19,9 @@ void error();
 
 int count = 5;
 int portnr = 2000; //Default Port 2000
-int delay_t = 1000;
+int delay_t = 1000; //Default Delay 1 Sec
 int verbose = 0;
+int firstrun = 1;
 
 float temp_average = 0, hum_average = 0, temp_current = 0, hum_current = 0;
 int * values;
@@ -66,7 +67,12 @@ static void *measure_thread(void* val) {
         if (verbose){
             printf("Average T: %f, Average H: %f\n",temp_current,hum_current);
         }
-        snprintf(message, sizeof(message), "Temperatur: %f; Humidity: %f\n", temp_current, hum_current);
+        snprintf(message, sizeof(message), "Temperature: %f; Humidity: %f\n", temp_current, hum_current);
+
+        if(firstrun){
+            printf("Server is ready...\n");
+            firstrun = 0;
+        }
 
     }
 
@@ -117,7 +123,10 @@ static void *socketconnect(void* val){
             error("ERROR reading from socket\n");
         }
 
-        printf("Here is the message: %s\n", buffer);
+        if (verbose){
+            printf("New Request!\n");
+        }
+
         n = write(newsockfd, message, 64);
 
         if (n < 0) {
@@ -204,7 +213,7 @@ int main(int argc, char *argv[])
         }
 
         if (count == 5 && portnr == 2000 && delay_t == 1000){
-            printf("Nah! Nah! Nah! Seems like the config file was not in the right format.\n"
+            printf("Ah Ah Ah! Seems like the config file was not in the right format.\n"
                    "Using default Values...\n\n");
         }
 
