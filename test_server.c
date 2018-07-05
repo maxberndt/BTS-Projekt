@@ -26,6 +26,7 @@ int firstrun = 1;
 float temp_average = 0, hum_average = 0, temp_current = 0, hum_current = 0;
 int * values;
 char message[64];
+char speak[128];
 int sockfd, newsockfd, portno;
 
 static void *measure_thread(void* val) {
@@ -42,6 +43,7 @@ static void *measure_thread(void* val) {
             if (values[0]!=0){ //Luftfeuchtigkeit von 0 kommt real kaum vor
                 if (verbose){
                     printf( "Humidity = %d.%d %% Temperature = %d.%d *C\n", values[0], values[1], values[2], values[3] );
+
                 }
                 temp[i] = values[2];
                 hum[i] = values[0];
@@ -68,6 +70,14 @@ static void *measure_thread(void* val) {
             printf("Average T: %f, Average H: %f\n",temp_current,hum_current);
         }
         snprintf(message, sizeof(message), "Temperature: %f; Humidity: %f\n", temp_current, hum_current);
+
+        //Just for fun: Text to speech output with espeak
+        //snprintf(speak, sizeof(speak), "espeak -vde \"Oh mein Gott es hat %i Grad und die Luft ist %i feucht\" 2>/dev/null", (int)temp_current, (int)hum_current);
+        //system(speak);
+
+
+
+
 
         if(firstrun){
             printf("Server is ready...\n");
@@ -180,8 +190,12 @@ int main(int argc, char *argv[])
                     verbose = 1;
                     break;
                 case 'c':
-                    printf("%s\n\n", argv[0+1]);
-                    strcpy(config_file, argv[0+1]);
+                    if (argv[0+1]!=NULL){
+                        printf("Config File: %s\n\n", argv[0+1]);
+                        strcpy(config_file, argv[0+1]);
+                    } else {
+                        printf("File Name is missing! Using default File Name...\n");
+                    }
                     break;
             }
         }
