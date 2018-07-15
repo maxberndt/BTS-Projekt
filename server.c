@@ -69,7 +69,7 @@ static void *measure_thread(void* val) {
         if (verbose){
             printf("Average T: %f, Average H: %f\n",temp_current,hum_current);
         }
-        snprintf(message, sizeof(message), "Temperature: %f; Humidity: %f\n", temp_current, hum_current);
+        snprintf(message, sizeof(message), "Temperature: %.3f; Humidity: %.3f\n", temp_current, hum_current);
 
         //Just for fun: Text to speech output with espeak
         //snprintf(speak, sizeof(speak), "espeak -vde \"Oh mein Gott es hat %i Grad und die Luft ist %i feucht\" 2>/dev/null", (int)temp_current, (int)hum_current);
