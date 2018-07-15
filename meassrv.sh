@@ -15,7 +15,6 @@ elif [ $# -eq 1 ]
 
 	case "$1" in
 		start)
-		cd /home/antonia/Schreibtisch
 		echo "Server will be started. He'll live." 
 		gcc -Wall -o dht11srv dht11srv.c -lwiringPi -lpthread
 
