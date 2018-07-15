@@ -7,11 +7,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-void error(const char *msg)
-{
-    fprintf(stderr, msg);
-    exit(1);
-}
+void error();
 
 int main(int argc, char *argv[])
 {
@@ -69,4 +65,10 @@ int main(int argc, char *argv[])
     printf("%s\n",buffer);
     close(sockfd);
     return 0;
+}
+
+void error(const char *msg)
+{
+    fprintf(stderr, msg);
+    exit(1);
 }
