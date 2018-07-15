@@ -18,7 +18,7 @@ elif [ $# -eq 1 ]
 		echo "Server will be started. He'll live." 
 		gcc -Wall -o dht11srv dht11srv.c -lwiringPi -lpthread
 
-		nohup ./dht11srv.exe &
+		nohup ./dht11srv &
 
 		sleep 5s
 		exit 2
@@ -26,16 +26,16 @@ elif [ $# -eq 1 ]
 
 		restart)
 		echo "The server will be restarted. I'll be back!"
-		killall ./dht11srv.exe
+		killall ./dht11srv
 		sleep 2s
 		gcc -Wall -o dht11srv dht11srv.c -lwiringPi -lpthread
-		nohup ./dht11srv.exe &
+		nohup ./dht11srv &
 		exit 3
 		;;
 
 		stop)
 		echo "The termination has started. Hasta la vista, baby!"
-		killall ./dht11srv.exe
+		killall ./dht11srv
 		exit 4
 		;; 
 		
