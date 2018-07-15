@@ -18,6 +18,36 @@ int main(int argc, char *argv[])
 
     char buffer[256];
 
+
+    if (argc < 2) {
+        error("First parameter must be the servers IP-Address\n");
+    }
+
+    while ((++argv)[0])
+    {
+        if (argv[0][0] == '-' )
+        {
+            switch (argv[0][1])  {
+
+                default:
+                    printf("Unknown parameter -%c\n\n", argv[0][1]);
+                    break;
+                case 'h':
+                    printf("Help: BLABLABLA\n\n");
+                    break;
+                case 'p':
+                    if (argv[0+1]!=NULL){
+                        portnumber = atoi(argv[0+1]);
+                        printf("New Port: %i\n\n", portnumber);
+                    } else {
+                        printf("Port not valid! Using default port 2000...\n");
+                    }
+                    break;
+            }
+        }
+
+    }
+
     portno = portnumber;
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
