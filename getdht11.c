@@ -33,7 +33,10 @@ int main(int argc, char *argv[])
                     printf("Unknown parameter -%c\n\n", argv[0][1]);
                     break;
                 case 'h':
-                    printf("Usage: ./getdht11 + IP-Address (+ -p Portnumber)\n\n");
+                    printf("Help: BLABLABLA\n\n");
+                    break;
+                case 'p':
+                    verbose = 1;
                     break;
                 case 'p':
                     if (argv[0+1]!=NULL){
@@ -48,7 +51,7 @@ int main(int argc, char *argv[])
 
     }
 
-    int sock, n;
+    int sock, portno, n;
     struct sockaddr_in serv_addr; //structur erstellen
     struct hostent *server;
 
