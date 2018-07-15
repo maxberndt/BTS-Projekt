@@ -12,9 +12,10 @@ void error();
 int main(int argc, char *argv[])
 {
     int sockfd, portno, n;
-    portno = 2000;
     struct sockaddr_in serv_addr;
     struct hostent *server;
+
+    int portnumber = 2000;
 
     if (argc < 2) {
         error("First parameter must be the servers IP-Address\n");
@@ -35,7 +36,7 @@ int main(int argc, char *argv[])
                 case 'p':
                     if (argv[0+1]!=NULL){
                         printf("Port: %s\n\n", argv[0+1]);
-                        portno = atoi(argv[0+1]);
+                        portnumber = atoi(argv[0+1]);
                     } else {
                         printf("Port not valid! Using default port...\n");
                     }
@@ -47,6 +48,7 @@ int main(int argc, char *argv[])
 
     char buffer[256];
 
+    portno = portnumber;
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
     if (sockfd < 0){
