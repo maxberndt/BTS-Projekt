@@ -36,10 +36,9 @@ int parameter(int argc, char* argv[]){
     return portnumber;
     }
 
-void error(const char *msg) //if failure
-{
-    perror(msg);
-    exit(0);
+void error(const char *msg){
+    fprintf(stderr, msg);
+    exit(1);
 }
 
 int main(int argc, char *argv[])
@@ -53,17 +52,18 @@ int main(int argc, char *argv[])
     char buffer[256];
     if (argc < 3) {
        fprintf(stderr,"usage %s hostname port\n", argv[0]);
-       exit(0);
+       exit(1);
     }
     sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock < 0)
-        fprintf(stderr,"ERROR opening socket\n");
+    if (sock < 0){
+       error("ERROR opening socket\n")
+    }
 
    server = gethostbyname(argv[1]);
-    if (server == NULL) {
-        fprintf(stderr,"ERROR, host is not found\n");
-        exit(0);
-    }
+   if (server == NULL) {
+        error("ERROR, host is not found\n");
+   }
+
     bzero((char *) &serv_addr, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     bcopy((char *)server->h_addr,
@@ -71,18 +71,22 @@ int main(int argc, char *argv[])
          server->h_length);
 
     serv_addr.sin_port = htons(portnumber);
-    if (connect(sock,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0)
-        fprintf(stderr, "ERROR connecting\n");
-    printf("Press Enter to start");
+    if (connect(sock,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0){
+        error("ERROR connecting\n");
+    }
+
+    printf("Press Enter to get values");
     fgets(buffer,255,stdin);
     n = write(sock,buffer,strlen(buffer));
-    if (n < 0)
-         error("ERROR writing to socket");
+    if (n < 0){
+      error("ERROR writing to socket\n");
+    }
 
     bzero(buffer,256);
     n = read(sock,buffer,255);
-    if (n < 0)
-         error("ERROR reading from socket");
+    if (n < 0){
+      error("ERROR reading from socket\n");
+    }
     printf("%s\n",buffer);
     close(sock);
     return 0;
