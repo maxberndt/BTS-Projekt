@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
     struct hostent *server;
 
     char buffer[256];
+    server = gethostbyname(argv[1]);
 
 
     if (argc < 2) {
@@ -55,7 +56,7 @@ int main(int argc, char *argv[])
         error("ERROR opening socket\n");
     }
 
-    server = gethostbyname(argv[1]);
+
 
     if (server == NULL) {
         error("ERROR, no such host\n");
