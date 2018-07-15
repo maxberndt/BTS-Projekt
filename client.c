@@ -26,9 +26,6 @@ int main(int argc, char *argv[])
        error("Wrong usage\n");
     }
 
-    int length = strlen(argv[0]);
-    printf("%i",length);
-
     portno = atoi(argv[2]);
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -49,18 +46,26 @@ int main(int argc, char *argv[])
          (char *)&serv_addr.sin_addr.s_addr,
          server->h_length);
     serv_addr.sin_port = htons(portno);
-    if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0)
-        error("ERROR connecting");
-    printf("Please enter the message: ");
+
+    if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0){
+      error("ERROR connecting");
+    }
+
+    printf("Press Enter to get values...\n");
     bzero(buffer,256);
     fgets(buffer,255,stdin);
     n = write(sockfd,buffer,strlen(buffer));
-    if (n < 0)
-         error("ERROR writing to socket");
+    if (n < 0){
+      error("ERROR writing to socket\n");
+    }
+
     bzero(buffer,256);
     n = read(sockfd,buffer,255);
-    if (n < 0)
-         error("ERROR reading from socket");
+
+    if (n < 0){
+      error("ERROR reading from socket\n");
+    }
+
     printf("%s\n",buffer);
     close(sockfd);
     return 0;
