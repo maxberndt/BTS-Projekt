@@ -42,7 +42,7 @@ elif [ $# -eq 1 ]
 		
 		status)
 		echo "Information about your status will be provided"
-		netstat -u -o 
+		netstat -t -o 
 		;;
 		
 		help | -h | h | --h | -o | --o)
