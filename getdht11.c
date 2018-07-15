@@ -17,12 +17,12 @@ int main(int argc, char *argv[])
     struct hostent *server;
 
     char buffer[256];
-    server = gethostbyname(argv[1]);
-
 
     if (argc < 2) {
         error("First parameter must be the servers IP-Address\n");
     }
+
+    server = gethostbyname(argv[1]);
 
     while ((++argv)[0])
     {
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
                     printf("Unknown parameter -%c\n\n", argv[0][1]);
                     break;
                 case 'h':
-                    printf("Help: BLABLABLA\n\n");
+                    printf("Help: Usage ./getdht11 IP ADDRESS + (-p Port)\n\n");
                     break;
                 case 'p':
                     if (argv[0+1]!=NULL){
