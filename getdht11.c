@@ -12,39 +12,9 @@ void error();
 int main(int argc, char *argv[])
 {
     int sockfd, portno, n;
+    int portnumber = 2000;
     struct sockaddr_in serv_addr;
     struct hostent *server;
-
-    int portnumber = 2000;
-
-    if (argc < 2) {
-        error("First parameter must be the servers IP-Address\n");
-    }
-
-    while ((++argv)[0])
-    {
-        if (argv[0][0] == '-' )
-        {
-            switch (argv[0][1])  {
-
-                default:
-                    printf("Unknown parameter -%c\n\n", argv[0][1]);
-                    break;
-                case 'h':
-                    printf("Help: BLABLABLA\n\n");
-                    break;
-                case 'p':
-                    if (argv[0+1]!=NULL){
-                        printf("Port: %s\n\n", argv[0+1]);
-                        portnumber = atoi(argv[0+1]);
-                    } else {
-                        printf("Port not valid! Using default port...\n");
-                    }
-                    break;
-            }
-        }
-
-    }
 
     char buffer[256];
 
@@ -55,7 +25,6 @@ int main(int argc, char *argv[])
         error("ERROR opening socket\n");
     }
 
-
     server = gethostbyname(argv[1]);
 
     if (server == NULL) {
@@ -65,12 +34,12 @@ int main(int argc, char *argv[])
     bzero((char *) &serv_addr, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     bcopy((char *)server->h_addr,
-          (char *)&serv_addr.sin_addr.s_addr,
-          server->h_length);
+         (char *)&serv_addr.sin_addr.s_addr,
+         server->h_length);
     serv_addr.sin_port = htons(portno);
 
     if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0){
-        error("ERROR connecting");
+      error("ERROR connecting");
     }
 
     printf("Press Enter to get values...\n");
@@ -78,14 +47,14 @@ int main(int argc, char *argv[])
     fgets(buffer,255,stdin);
     n = write(sockfd,buffer,strlen(buffer));
     if (n < 0){
-        error("ERROR writing to socket\n");
+      error("ERROR writing to socket\n");
     }
 
     bzero(buffer,256);
     n = read(sockfd,buffer,255);
 
     if (n < 0){
-        error("ERROR reading from socket\n");
+      error("ERROR reading from socket\n");
     }
 
     printf("%s\n",buffer);
